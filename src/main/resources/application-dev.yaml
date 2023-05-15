@@ -2,15 +2,15 @@ spring:
   #数据源配置
  datasource:
   driver-class-name: com.mysql.cj.jdbc.Driver
-  username: 00000
+  username: root
   password: 00000..
-  url: jdbc:mysql://0000:3306/mysql?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+  url: jdbc:mysql://000:3306/00?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
   #redis配置
  redis:
-  host: 0000
+  host: localhost
   database: 0
   port: 6379
-  password: 0000..
+  password: 0..
   jedis:
    pool:
     max-active: 8

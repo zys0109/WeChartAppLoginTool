@@ -130,21 +130,29 @@ public class UserServiceImpl implements UserService {
          * 2、refresh如果是true则需重新生成token并返回用户信息
          * 3、refresh如果是false则不需要重新生成token直接返回用户信息
          */
-        token = token.replace("Bearer ", "");
+        log.info("截取前的token:"+token);
+        token = token.replace("Bearer", "").trim();
+        log.info("截取后的token:"+token);
         boolean verify = JWTUtils.verify(token);
         if (!verify){
+            log.info("["+token+"]校验不通过！！！");
             return Result.FAIL();
         }
         String userDtoJson = redisTemplate.opsForValue().get(RedisKey.TOKEN + token);
         if (StringUtils.isBlank(userDtoJson)){
+            redisTemplate.delete(RedisKey.TOKEN+token);
+            log.info("userDtoJson为空！！！");
             return Result.FAIL();
         }
         UserDto userDto = JSON.parseObject(userDtoJson,UserDto.class);
         if (refresh){
+            redisTemplate.delete(RedisKey.TOKEN+token);
             token = JWTUtils.sign(userDto.getId());
             userDto.setToken(token);
-            redisTemplate.opsForValue().set(RedisKey.TOKEN+token,userDto.toString(),7,TimeUnit.DAYS);
+            redisTemplate.opsForValue().set(RedisKey.TOKEN+token,new JSONObject(userDto).toString(),7,TimeUnit.DAYS);
+            log.info("续签登录态完成！！！");
         }
+        userDto.setOpenId(null);
         return Result.SUCCESS(userDto);
     }
 }

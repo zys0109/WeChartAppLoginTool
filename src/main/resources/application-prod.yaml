@@ -3,14 +3,14 @@ spring:
  datasource:
   driver-class-name: com.mysql.cj.jdbc.Driver
   username: 0000
-  password: 00000..
-  url: jdbc:mysql://00000:3306/mysql?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+  password: 0000..
+  url: jdbc:mysql://000000:3306/0000?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
   #redis配置
  redis:
   host: 0000
   database: 0
   port: 6379
-  password: 0000..
+  password: 000..
   jedis:
    pool:
     max-active: 8
@@ -20,6 +20,6 @@ spring:
   timeout: 20000ms
 wxinfo:
   getSessionIdUrl: https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code
-  appId: 000000
-  secret: 0000000
+  appId: 0000
+  secret: 0000
 

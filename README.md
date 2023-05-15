@@ -8,6 +8,8 @@
 
 请求方式: get
 
+附加说明：返回参数code=0 成功，code=-1失败
+
 请求参数:
 
 | 名称 | 类型   | 描述                       |
@@ -38,6 +40,8 @@ https://localhost:8080/GPTAuthLogin/user/getSessionId
 
 请求方式: post
 
+附加说明：返回参数code=0 成功，code=-1失败
+
 请求参数:
 
 | 名称          | 类型   | 描述                         |
@@ -66,17 +70,18 @@ https://localhost:8080/GPTAuthLogin/user/authLogin
 
 请求方式: get
 
+附加说明：该接口有两个功能①校验当前token是否有效②可以为当前token对应用户登录续签登录态时长；返回参数code=0 成功，code=-1失败
+
 请求参数:
 
 | 名称    | 类型 | 描述                 |
 | ------- | ---- | -------------------- |
-| refresh | bool | true刷新 false不刷新 |
+| refresh | bool | true续签 false不续签 |
 
 返回数据:
 
 ~~~json
-https://localhost:8080/GPTAuthLogin/user/userinfo
+https://localhost:8080/GPTAuthLogin/user/userinfo?refresh=true
 
 {"code":0,"data":{"background":"","gender":"女","id":6,"nickname":"微信用户","phoneNumber":"122","portrait":"https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132","token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NiwiZXhwIjoxNjI5MzA0NDYyfQ.MZnlOARueap1r_yhoujeMrUzNRs7xvuPBuT9JG9Tpf0"},"message":"操作成功！"}
 ~~~
-
