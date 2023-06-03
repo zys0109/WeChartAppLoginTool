@@ -3,12 +3,13 @@ package com.example.wechartapplogintool.service.impl;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.wechartapplogintool.common.RedisKey;
 import com.example.wechartapplogintool.common.Result;
+import com.example.wechartapplogintool.common.util.FileUtil;
+import com.example.wechartapplogintool.domain.UserDomain;
 import com.example.wechartapplogintool.entity.User;
 import com.example.wechartapplogintool.entity.dto.UserDto;
 import com.example.wechartapplogintool.mapper.UserMapper;
@@ -18,14 +19,15 @@ import com.example.wechartapplogintool.service.UserService;
 import com.example.wechartapplogintool.utile.JWTUtils;
 import com.example.wechartapplogintool.utile.WeChartUserIfonDecrypt;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -37,6 +39,14 @@ public class UserServiceImpl implements UserService {
     private String appId;
     @Value("${wxinfo.secret}")
     private String secret;
+    @Value("${userInfo.userName}")
+    private String userName;
+    @Value("${userInfo.portraitType}")
+    private String portraitType;
+    @Value("${userInfo.portraitUrl}")
+    private String portraitUrl;
+    @Value("${userInfo.portraitSize}")
+    private String portraitSize;
     @Autowired
     private StringRedisTemplate redisTemplate;
 
@@ -155,5 +165,35 @@ public class UserServiceImpl implements UserService {
         userDto.setOpenId(null);
         return Result.SUCCESS(userDto);
     }
+
+    public Result saveUserInfo(String token, String data) throws Exception {
+        token = token.replace("Bearer", "").trim();
+        //String userDtoJson = redisTemplate.opsForValue().get(RedisKey.TOKEN + token);
+        String userDtoJson = redisTemplate.opsForValue().get(token);
+        User user = JSON.parseObject(userDtoJson,User.class);
+        //校验是否登录和注册
+        UserDomain.checkUserRegisterAndLogin(user);
+        //判断是否更新数据 true-更新
+        Map<String,String> map=UserDomain.checkUserName(userName,user.getNickname(),data);
+        if("true".equals(map.get("flag"))){
+            user=userMapper.selectByOpenid(user.getOpenId());
+            String portrait=map.get("portrait");
+            //获取当前存储的地址 ，然后删除之前的图片
+            UserDomain.deleteImag(user.getPortrait(),portraitUrl);
+            //校验文件大小
+            UserDomain.imageSize(portrait,portraitSize);
+            //校验图片格式
+            String imageType=UserDomain.checkImagType(portraitType.split(";"),portrait);
+            //存储图片
+            String path=FileUtil.byteToImage(portrait.split(",")[1],imageType,portraitUrl);
+            user.setNickname(map.get("nickName"));
+            user.setPortrait(path);
+            userMapper.updateById(user);
+            user=userMapper.selectByOpenid(user.getOpenId());
+        }
+        return Result.SUCCESS(user);
+    }
+
+
 }
 

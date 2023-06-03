@@ -8,4 +8,6 @@ public interface UserService {
     Result authLogin(WeChartAuth weChartAuth);
 
     Result userInfo(String token, Boolean refresh);
+
+    Result saveUserInfo(String token,String data) throws Exception;
 }

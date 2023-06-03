@@ -22,4 +22,8 @@ wxinfo:
   getSessionIdUrl: https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code
   appId: 0000
   secret: 0000
-
+userInfo:
+  userName: 微信用户
+  portraitType: jpg;png;jpeg
+  portraitUrl: wxImag
+  portraitSize: 5

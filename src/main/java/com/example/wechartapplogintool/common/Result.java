@@ -1,6 +1,5 @@
 package com.example.wechartapplogintool.common;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import lombok.Data;
 
 /**
@@ -37,6 +36,10 @@ public class Result<T> {
     //操作失败
     public static Result FAIL(){
         return new Result(ResultCode.FAIL);
+    }
+    public  Result(int code,String message){
+        this.code=code;
+        this.message=message;
     }
 
 }
